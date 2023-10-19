@@ -3,8 +3,9 @@
 
 int main(int argc, char *argv[]){
     FILE *archivo;
-    archivo = fopen("basededatos.txt","a");
-    char *texto = argv[1];
+    char *nombreArchivo = argv[1];
+    archivo = fopen(strcat(nombreArchivo,".txt"),"a");
+    char *texto = argv[2];
     fputs(strcat(texto,"\n"),archivo);
     fclose(archivo);
     return 0;
