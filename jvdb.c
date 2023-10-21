@@ -29,6 +29,34 @@ int main(int argc, char *argv[]){
         char *texto = argv[4];
         fputs(strcat(texto,"\n"),archivo);
         fclose(archivo);
+
+    }else if(strcmp(operacion,"delete")==0){
+        archivo = fopen(ruta,"r+"); //modo lectura y escritura
+        char *texto = argv[4];
+        char linea[1024];
+        int encontrado = 0;
+        char *borrado = argv[5];
+        //fgets(linea,sizeof(linea),archivo);
+        //printf("Linea: %s", linea);
+
+        //compara el char - strcmp() si dos cadenas son identicas devuelve 0
+        while(fgets(linea,sizeof(linea),archivo) != NULL && !encontrado){
+            if (strstr(linea,texto)!=NULL){
+                printf("cliente encontrado: %s \n", linea);
+                if (strcmp(borrado,"eliminar")==0){
+                    
+                    printf("Cliente borrado");
+                }
+                
+                encontrado=1;
+            }else if(!encontrado){
+                printf("El cliente no pertenece a la lista");
+            }
+            
+            //printf("Linea: %s", linea);
+        }
+        fputs(strcat(texto,"\n"),archivo);
+        fclose(archivo);
         
     }else {
         printf("La operación no es correcta");
