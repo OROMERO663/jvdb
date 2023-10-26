@@ -3,6 +3,7 @@
 
 int main(int argc, char *argv[]){
     FILE *archivo;
+    FILE *archivoTemp;
     char *operacion = argv[1];
     char *basededatos = argv[2];
     char *nombreArchivo = argv[3];
@@ -18,8 +19,7 @@ int main(int argc, char *argv[]){
         archivo = fopen(ruta,"r");
         printf("Te doy datos:\n");
         char linea[1024];
-        //Vamos a atrapar dentro de la línea, el tamaño de la linea con respecto al archivo abierto
-        //Mientras que lo de dentro no sea nulo va a funcionar
+
         while(fgets(linea,sizeof(linea),archivo) != NULL){
             printf("Linea: %s", linea);
         }
@@ -31,35 +31,45 @@ int main(int argc, char *argv[]){
         fclose(archivo);
 
     }else if(strcmp(operacion,"delete")==0){
-        archivo = fopen(ruta,"r+"); //modo lectura y escritura
+        archivo = fopen(ruta,"r");
+        archivoTemp = fopen("temporal.txt","w");
         char *texto = argv[4];
         char linea[1024];
-        int encontrado = 0;
-        char *borrado = argv[5];
-        //fgets(linea,sizeof(linea),archivo);
-        //printf("Linea: %s", linea);
 
-        //compara el char - strcmp() si dos cadenas son identicas devuelve 0
-        while(fgets(linea,sizeof(linea),archivo) != NULL && !encontrado){
-            if (strstr(linea,texto)!=NULL){
-                printf("cliente encontrado: %s \n", linea);
-                if (strcmp(borrado,"eliminar")==0){
-                    
-                    printf("Cliente borrado");
-                }
-                
-                encontrado=1;
-            }else if(!encontrado){
-                printf("El cliente no pertenece a la lista");
+        while(fgets(linea,sizeof(linea),archivo) != NULL){
+            if(strstr(linea, texto) == NULL){
+                fputs(linea,archivoTemp);
             }
-            
-            //printf("Linea: %s", linea);
         }
-        fputs(strcat(texto,"\n"),archivo);
         fclose(archivo);
-        
-    }else {
-        printf("La operación no es correcta");
+        fclose(archivoTemp);
+
+        remove(ruta);
+        rename("temporal.txt", ruta);
+
+    }else if(strcmp(operacion,"update")==0){
+        archivo = fopen(ruta,"a");
+        char *texto = argv[4];
+        char linea[1024];
+        char *modificado = argv[5];
+
+        fputs(strcat(modificado,"\n"),archivo);
+        fclose(archivo);
+
+        archivo = fopen(ruta,"r");
+        archivoTemp = fopen("temporal.txt","w");
+
+        while(fgets(linea,sizeof(linea),archivo) != NULL){
+            if(strstr(linea, texto) == NULL){
+                fputs(linea,archivoTemp);
+            }
+        }
+        fclose(archivo);
+        fclose(archivoTemp);
+
+        remove(ruta);
+        rename("temporal.txt", ruta);
+
     }
     return 0;
 }
